@@ -1,0 +1,6 @@
+{
+  "port": 63912,
+  "maxClients": 100,
+  "maxEGGsAtOneClient": 1000,
+  "debug": true
+}
