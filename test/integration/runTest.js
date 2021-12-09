@@ -1,3 +1,5 @@
-const sendEGGS = new (require('./command/sendEGGs.js'));
+const HandShake = new (require('./command/HandShake.js'));
+const SendEGGS = new (require('./command/SendEGGs.js'));
 
-sendEGGS.run();
+//HandShake.run();
+SendEGGS.run();

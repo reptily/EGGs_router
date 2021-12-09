@@ -4,6 +4,7 @@ const config = require('../config.json');
 const Socket = require('./controllers/Socket.js');
 
 let clients = [];
+global.dbEGGs = [];
 
 const server = net.createServer((client) => {
     let meId = clients.length;

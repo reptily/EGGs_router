@@ -5,17 +5,17 @@ module.exports = class extends Tests {
 
     testIntToBytes2() {
         let bytes = Helper.intToBytes2(123);
-        this.assertSame(Buffer.from([0x00, 0x7b]), bytes);
+        this.assertSame([0x00, 0x7b], bytes);
     }
 
     testIntToBytes4() {
         let bytes = Helper.intToBytes4(123);
-        this.assertSame(Buffer.from([0x00, 0x00, 0x00, 0x7b]), bytes);
+        this.assertSame([0x00, 0x00, 0x00, 0x7b], bytes);
     }
 
     testIntToBytes8() {
         let bytes = Helper.intToBytes8(123);
-        this.assertSame(Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7b]), bytes);
+        this.assertSame([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7b], bytes);
     }
 
     testBytes2ToInt() {

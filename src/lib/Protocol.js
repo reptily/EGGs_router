@@ -16,15 +16,15 @@ const version = [0x00, 0x00, 0x01]; // 0.0.1
 
 /**
  * first byte
- * 0 - 100 Client
- * 101 - 200 Server
- * 202 - 255 Errors Server
+ * 0 - 199 Client
+ * 200 - 255 Server
  *
  * @type {Array}
  */
 const dictionariesCommand = [
-    'OK', // 0
+    'HandShake', // 0
     'SendEggs', // 1
+    'ResponseSendEggs', // 3
 ];
 
 
@@ -59,22 +59,27 @@ module.exports = class {
         let packet = new Packet();
         packet.version = version;
         packet.command = command;
-        packet.content = content ;
+        packet.content = content;
 
         return packet;
     }
 
     answer(command, content) {
-        let data = Array.from(Buffer.from(content, 'utf8'));
-        let packetLenght = 17 + data.length;
+        let packetLenght = 17;
+        let data = [];
+
+        if (content !== null) {
+            data = Array.from(Buffer.from(content, 'utf8'));
+            packetLenght = packetLenght + data.length;
+        }
 
         return Buffer.from(
             startBit
-            .concat(Helper.intToBytes8(packetLenght)) // Length packet (17 + content)
-            .concat(version) // Version protocol
-            .concat(Helper.intToBytes2(command)) // Number command
-            .concat(content)
-            .concat(stopBit)
+                .concat(Helper.intToBytes8(packetLenght)) // Length packet (17 + content)
+                .concat(version) // Version protocol
+                .concat(Helper.intToBytes2(command)) // Number command
+                .concat(data)
+                .concat(stopBit)
         );
     }
 
@@ -86,6 +91,10 @@ module.exports = class {
         });
 
         return false;
+    }
+
+    getNameCommand(id) {
+        return dictionariesCommand[id] || null;
     }
 
 };

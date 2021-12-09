@@ -1,23 +1,23 @@
 module.exports = class {
 
     intToBytes2(num) {
-        return Buffer.from([
+        return [
             (num >> 8) & 255,
             num & 255,
-        ]);
+        ];
     }
 
     intToBytes4(num) {
-        return Buffer.from([
+        return [
             (num >> 24) & 255,
             (num >> 16) & 255,
             (num >> 8) & 255,
             num & 255,
-        ]);
+        ];
     }
 
     intToBytes8(num) {
-        return Buffer.from([
+        return [
             0,
             0,
             0,
@@ -26,7 +26,7 @@ module.exports = class {
             (num >> 16) & 255,
             (num >> 8) & 255,
             num & 255,
-        ]);
+        ];
     }
 
     bytes2ToInt(bytes) {

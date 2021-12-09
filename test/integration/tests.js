@@ -9,6 +9,9 @@ module.exports = class {
         this.failed = 0;
         this.errors = [];
         this.client = null;
+        this.response = null;
+        
+        this._isIfAnswer = false;
     }
 
     run() {
@@ -16,14 +19,15 @@ module.exports = class {
 
         (async () => {
             await this._connect();
-
-            classes.forEach((item, i) => {
+            
+            for (const item of classes) {
                 const regex = /^test([A-Z])/gmi;
                 if (regex.exec(item) !== null) {
                     Color.p('FgYellow', 'Test ' + item);
                     eval('this.' + item + '()');
+                    this.response = await this._getResponse();
                 }
-            });
+            }
 
             Color.p('FgGreen', 'Passed: '+ this.passed);
             if (this.failed > 0) {
@@ -47,10 +51,40 @@ module.exports = class {
                 Color.p('FgGreen', 'Connected to server!');
                 resolve();
             });
+            this.client.on("data", (data) => {
+                this.response = data;
+                this._isIfAnswer = true;
+            });
+        });
+    }
+    
+    async _getResponse() {
+        return new Promise((resolve, reject) => {
+            let timer = setInterval(() => {
+                if (this._isIfAnswer !== false) {
+                    clearTimeout(timer);
+                    resolve(this.response);
+                }
+            }, 100);
+            
+            setTimeout(() => reject(null), 30000);
         });
     }
 
-    sendPacket(bytes) {
+    sendPacket(bytes, sendHandShake = true) {
+        this._isIfAnswer = false;
+        this.response = null;
+        
+        if (sendHandShake) {
+            let packet = [0xfe, 0x06] // Start bit
+            .concat([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11]) // Length packet (17 + content)
+            .concat([0x00, 0x00, 0x01]) // Version protocol
+            .concat([0x00, 0x00]) // Number command (0 - HandShake)
+            .concat([0xcd, 0x87]); // Stop bit
+            
+            this.client.write(new Buffer.from(packet));
+        }
+        
         this.client.write(new Buffer.from(bytes));
     }
 
